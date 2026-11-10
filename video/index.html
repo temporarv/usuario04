@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Video QR - Prueba</title>
+
+  <style>
+    html, body {
+      margin: 0;
+      width: 100%;
+      height: 100%;
+      background: black;
+      overflow: hidden;
+    }
+
+    video {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      background: black;
+    }
+
+    #sound, #replay {
+      position: fixed;
+      /* bottom: 0px; */
+      left: 50%;
+      transform: translateX(-50%);
+      padding: 14px 22px;
+      border: 0;
+      border-radius: 30px;
+      background: #E0E0E0;
+      color: black;
+      font-size: 16px;
+      z-index: 2;
+      cursor: pointer;
+    }
+    #sound, #paused {
+      font-family: Arial, sans-serif;
+    }
+    #sound {
+      bottom: 25px;
+    }
+
+    #replay {
+     display: none;
+     top: 50%;
+     /* bottom: 300px; */
+     transform: translate(-50%, -50%);
+     /* border-radius: 12px; */
+     /* padding: 0px 12px; */
+     background: rgba(224, 224, 224, 0.6);
+     /*font-size: 48px; */
+     text-align: center;
+     line-height: 1;
+     padding-top: 12px;
+     padding-bottom: 14px;
+     padding-left: 18px;
+     padding-right: 14px;
+
+     flex-direction: column;
+     align-items: center;
+     justify-content: center;
+     gap: 4px;
+    }
+
+    :root {
+      --paused-bottom: 75px;
+    }
+    
+    #paused {
+      display: none;
+      position: fixed;
+      bottom: var(--paused-bottom);
+      left: 50%;
+      transform: translateX(-50%);
+      color: black;
+      background: rgba(224, 224, 224, 0.6);
+      padding: 10px 20px;
+      border-radius: 10px;
+      /* font-family: inherit; */
+      font-size: 24px;
+      z-index: 5;
+      pointer-events: none;
+    }
+
+    .replay-title {
+      font-size: 48px;
+      line-height: 1.1;
+    }
+
+    .replay-subtitle {
+      font-size: 12px;
+      line-height: 1.2;
+    }
+    
+  </style>
+</head>
+
+<body>
+  <video id="video" autoplay muted playsinline>
+    <source src="video.mp4" type="video/mp4">
+  </video>
+
+  <div id="paused">Pausado</div>
+  <button id="sound">Activar sonido 🔊</button>
+  <button id="replay">
+    <span class="replay-title">▶</span>
+    <span class="replay-subtitle">Reproducir nuevamente</span>
+  </button>
+
+  <script>
+    const video = document.getElementById("video");
+    const soundButton = document.getElementById("sound");
+    const replayButton = document.getElementById("replay");
+    const pausedText = document.getElementById("paused");
+
+    // Función para actualizar la posición del aviso
+      function updatePausedPosition() {
+        const bottom = soundButton.style.display === "none"
+          ? "25px"
+          : "75px";
+
+        document.documentElement.style.setProperty(
+          "--paused-bottom", bottom
+        );
+      }
+
+      // Establecer la posición inicial
+      updatePausedPosition();
+    
+    // Tocar el video para pausar o continuar
+    video.addEventListener("click", async () => {
+      if (video.ended) {
+        return;
+      }
+
+      if (video.paused) {
+        // Reanudar la reproducción
+        try {
+          await video.play();
+          pausedText.style.display = "none";
+          if (!video.muted) {
+            soundButton.style.display = "none";
+          }
+          updatePausedPosition();
+        } catch (error) {
+          console.error("No se pudo reproducir el video:", error);
+        }
+      } else {
+        // Pausar la reproducción
+        video.pause();
+        pausedText.style.display = "block";
+      }
+    });
+    
+    soundButton.addEventListener("click", () => {
+      video.muted = false;
+      soundButton.style.display = "none";
+
+      // Mantener el aviso si el video está pausado
+      if (video.paused && !video.ended) {
+        pausedText.style.display = "block";
+      }
+
+      updatePausedPosition();
+    });
+    
+    // Mostrar el botón de repetición al finalizar
+    video.addEventListener("ended", () => {
+      replayButton.style.display = "flex";
+     // soundButton.style.display = "none";
+            updatePausedPosition();
+    });
+
+    // Reproducir nuevamente solo cuando la persona lo solicite
+    replayButton.addEventListener("click", async () => {
+      replayButton.style.display = "none";
+
+      try {
+        video.currentTime = 0;
+        await video.play();
+      } catch (error) {
+        replayButton.style.display = "flex";
+      }
+    });
+    
+  </script>
+</body>
+</html>
