@@ -1,0 +1,26 @@
+{
+  "id": "./",
+  "name": "Tempora",
+  "short_name": "Tempora",
+  "description": "Tempora - Recuerdos vivos",
+  "lang": "es",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#554154",
+  "theme_color": "#554154",
+  "icons": [
+    {
+      "src": "./tempora-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "./tempora-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}
